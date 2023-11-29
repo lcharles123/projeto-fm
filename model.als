@@ -6,23 +6,15 @@
 	
 */
 -- The main componnent, where all elements reside and operate on
-one sig AccessSistem {
-	var rooms: set Locks,
-	--var users: set LockUsers,
+one sig AccessSystem {
+	var rooms: set Lock,
 	var management: set SystemUser
 }
 
-one abstract sig Locks {
-	var authorized: set LockUsers,
+one abstract sig Lock {
+	var authorized: set LockUser,
 	var logMessages: set LockMessage,
 	var state: LockState
-}
-one sig InsideRoom extends Locks {
-
-
-
-}
-one sig OutsideRoom extends Locks {
 }
 
 one abstract sig LockState {}
@@ -36,8 +28,9 @@ one sig Valid extends ExternalRegistry {}
 one sig Invalid extends ExternalRegistry {}
 
 -- Users is a user that operate on Locks
-sig LockUsers {
-	var valid: ExternalRegistry
+sig LockUser {
+	var valid: ExternalRegistry,
+	var inside: lone Lock
 }
 
 -- SystemUser are users that can only operate on system adding or removing LockUser
@@ -45,13 +38,16 @@ sig LockUsers {
 -- RegularUser can only 
 abstract sig SystemUser {}
 one sig AdminUser extends SystemUser {}
-sig SubAdminUser extends  SystemUser {}
+sig SubAdminUser extends SystemUser {}
 
 -- A log for lock usage
 abstract one sig LockMessage {
+	var user: LockUser,
+	var permission: Access
 }
-one sig Granted extends LockMessage {}
-one sig Denied extends LockMessage {}
+abstract sig Access {}
+one sig Granted extends Access {}
+one sig Denied extends Access {}
 
 /*
 -- added for convenience, track operations on the system
@@ -69,6 +65,8 @@ one sig Track {
 fact "Always have one AdminUser" {
 	always one AdminUser
 }
+
+run {}
 
 -- Initial conditions
 /*pred [] init {
