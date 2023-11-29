@@ -1,6 +1,6 @@
-/*	The system are compost by Three elements: Locks, LockUsers, SystemUser
+/*	The system are compost by Three elements: Locks, LockUsers, SystemUser and the system itself
 	At system execution there can be any number of these elements
-	Alaways at system execution, will have one SystemUser of AdminUser, it will be granted by a fact
+	Alaways at system execution, will have one AdminUser
 	Every Lock have it
 	The components reside on a sig that is the system itself
 	
@@ -30,7 +30,9 @@ one sig Invalid extends ExternalRegistry {}
 -- Users is a user that operate on Locks
 sig LockUser {
 	var valid: ExternalRegistry,
-	var inside: lone Lock
+	var going: one Where
+	
+
 }
 
 -- SystemUser are users that can only operate on system adding or removing LockUser
@@ -41,14 +43,20 @@ one sig AdminUser extends SystemUser {}
 sig SubAdminUser extends SystemUser {}
 
 -- A log for lock usage
-abstract one sig LockMessage {
+one sig LockMessage {
 	var user: LockUser,
-	var permission: Access
+	var permission: Access,
+	time: Date
 }
-abstract sig Access {}
+one abstract sig Access {}
 one sig Granted extends Access {}
 one sig Denied extends Access {}
 
+one abstract sig Where {}
+one sig Inside extends Where {}
+one sig Outside extends Where {}
+
+one sig Date {}
 /*
 -- added for convenience, track operations on the system
 abstract sig Operation {}
